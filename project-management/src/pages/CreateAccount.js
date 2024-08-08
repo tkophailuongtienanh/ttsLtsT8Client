@@ -1,12 +1,19 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useRef } from "react";
+import { Link } from "react-router-dom";
 
-import ImageLight from '../assets/img/create-account-office.jpeg'
-import ImageDark from '../assets/img/create-account-office-dark.jpeg'
-import { GithubIcon, TwitterIcon } from '../icons'
-import { Input, Label, Button } from '@windmill/react-ui'
+import ImageLight from "../assets/img/create-account-office.jpeg";
+import ImageDark from "../assets/img/create-account-office-dark.jpeg";
+import { GithubIcon, TwitterIcon } from "../icons";
+import { Input, Label, Button } from "@windmill/react-ui";
 
-function Login() {
+const Login = () => {
+  const usernameRef = useRef();
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const confirmPasswordRef = useRef();
+  const fullnameRef = useRef();
+  const dobRef = useRef();
+  const RegisterClick = () => {};
   return (
     <div className="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900">
       <div className="flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800">
@@ -31,22 +38,64 @@ function Login() {
                 Create account
               </h1>
               <Label>
+                <span>Username</span>
+                <Input
+                  className="mt-1"
+                  type="username"
+                  placeholder="johndoe"
+                  ref={usernameRef}
+                />
+              </Label>
+              <Label className="mt-4">
                 <span>Email</span>
-                <Input className="mt-1" type="email" placeholder="john@doe.com" />
+                <Input
+                  className="mt-1"
+                  type="email"
+                  placeholder="john@doe.com"
+                  ref={emailRef}
+                />
               </Label>
               <Label className="mt-4">
                 <span>Password</span>
-                <Input className="mt-1" placeholder="***************" type="password" />
+                <Input
+                  className="mt-1"
+                  placeholder="***************"
+                  type="password"
+                  ref={passwordRef}
+                />
               </Label>
               <Label className="mt-4">
                 <span>Confirm password</span>
-                <Input className="mt-1" placeholder="***************" type="password" />
+                <Input
+                  className="mt-1"
+                  placeholder="***************"
+                  type="password"
+                  ref={confirmPasswordRef}
+                />
               </Label>
-
+              <Label className="mt-4">
+                <span>Fullname</span>
+                <Input
+                  className="mt-1"
+                  placeholder="Nguyễn Văn A"
+                  type="fullname"
+                  ref={fullnameRef}
+                />
+              </Label>
+              <Label className="mt-4">
+                <span>Date of Birth</span>
+                <Input
+                  className="mt-1"
+                  placeholder="Nguyễn Văn A"
+                  type="date"
+                  ref={dobRef}
+                />
+              </Label>
               <Label className="mt-6" check>
                 <Input type="checkbox" />
                 <span className="ml-2">
-                  I agree to the <span className="underline">privacy policy</span>
+                  I agree to the{" "}
+                  <span className="underline">privacy policy</span>
                 </span>
               </Label>
 
@@ -55,15 +104,6 @@ function Login() {
               </Button>
 
               <hr className="my-8" />
-
-              <Button block layout="outline">
-                <GithubIcon className="w-4 h-4 mr-2" aria-hidden="true" />
-                Github
-              </Button>
-              <Button block className="mt-4" layout="outline">
-                <TwitterIcon className="w-4 h-4 mr-2" aria-hidden="true" />
-                Twitter
-              </Button>
 
               <p className="mt-4">
                 <Link
@@ -78,7 +118,7 @@ function Login() {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
