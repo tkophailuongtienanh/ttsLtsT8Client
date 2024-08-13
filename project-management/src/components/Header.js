@@ -11,8 +11,12 @@ import {
   OutlineLogoutIcon,
 } from '../icons'
 import { Avatar, Badge, Input, Dropdown, DropdownItem, WindmillContext } from '@windmill/react-ui'
+import Cookie from "js-cookie";
+import { useNavigate } from 'react-router-dom';
 
 function Header() {
+  const navigate = useNavigate();
+
   const { mode, toggleMode } = useContext(WindmillContext)
   const { toggleSidebar } = useContext(SidebarContext)
 
@@ -25,6 +29,11 @@ function Header() {
 
   function handleProfileClick() {
     setIsProfileMenuOpen(!isProfileMenuOpen)
+  }
+  
+  function LogOut(){
+    Cookie.set("token","");
+    navigate("/");
   }
 
   return (
@@ -128,7 +137,7 @@ function Header() {
                 <OutlineCogIcon className="w-4 h-4 mr-3" aria-hidden="true" />
                 <span>Settings</span>
               </DropdownItem>
-              <DropdownItem onClick={() => alert('Log out!')}>
+              <DropdownItem onClick={() => LogOut()}>
                 <OutlineLogoutIcon className="w-4 h-4 mr-3" aria-hidden="true" />
                 <span>Log out</span>
               </DropdownItem>

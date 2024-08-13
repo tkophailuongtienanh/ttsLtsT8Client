@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
 import ImageLight from "../assets/img/forgot-password-office.jpeg";
@@ -8,24 +8,62 @@ import { fetchWithAuth, fetchApi } from "../utils/callApi";
 import checkNull from "../utils/formValid";
 import { useToast } from "../context/ToastContext";
 
-function ForgotPassword() {
+function ResetPassword() {
   const { addToast } = useToast();
-  const emailRef = useRef();
+  const passRef = useRef();
+  const confirmRef = useRef();
+  const params = new URLSearchParams(window.location.search);
+  const email = params.get("email");
+  const otp = params.get("otp");
   const btnClick = () => {
-    if (!checkNull(emailRef)) return;
+    if (!checkNull(passRef) || !checkNull(confirmRef)) return;
+    if (confirmRef.current.value != passRef.current.value) {
+      addToast("danger", "Password và Confirm password không khớp", 10000);
+      return;
+    }
     const callApi = async () => {
-      const data = await fetchApi("Authentication/ForgotPassword", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const data = await fetchApi(
+        "Authentication/ResetPassword",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: { email: email, otp: otp, password: passRef.current.value },
         },
-        body: emailRef.current.value,
-      });
+        () => {
+          window.location.href = "/";
+        },
+        () => {
+          addToast("danger",data.message,10000)
+        }
+      );
       console.log(data);
-      addToast("success", data.message, 30000);
     };
     callApi();
   };
+  useEffect(() => {
+    if (email != null && otp != null) {
+      const callApi = async () => {
+        const data = await fetchApi(
+          "Authentication/ConfirmResetPassword",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: { email: email, otp: otp },
+          },
+          null,
+          () => {
+            window.location.href = "/app";
+          }
+        );
+        console.log(data);
+      };
+      callApi();
+    }
+  }, []);
   return (
     <div className="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900">
       <div className="flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800">
@@ -51,8 +89,22 @@ function ForgotPassword() {
               </h1>
 
               <Label>
-                <span>Email</span>
-                <Input ref={emailRef} className="mt-1" placeholder="Jane Doe" />
+                <span>Password</span>
+                <Input
+                  ref={passRef}
+                  type="password"
+                  className="mt-1"
+                  placeholder="***************"
+                />
+              </Label>
+              <Label className="mt-2">
+                <span>Confirm password</span>
+                <Input
+                  ref={confirmRef}
+                  type="password"
+                  className="mt-1"
+                  placeholder="***************"
+                />
               </Label>
 
               <button
@@ -71,4 +123,4 @@ function ForgotPassword() {
   );
 }
 
-export default ForgotPassword;
+export default ResetPassword;

@@ -7,6 +7,7 @@ import { SidebarProvider } from "./context/SidebarContext";
 import ThemedSuspense from "./components/ThemedSuspense";
 import { Windmill } from "@windmill/react-ui";
 import * as serviceWorker from "./serviceWorker";
+import { ToastProvider } from "./context/ToastContext";
 
 // if (process.env.NODE_ENV !== 'production') {
 //   const axe = require('react-axe')
@@ -17,7 +18,9 @@ ReactDOM.render(
   <SidebarProvider>
     <Suspense fallback={<ThemedSuspense />}>
       <Windmill dark usePreferences>
-        <App />
+        <ToastProvider>
+          <App />
+        </ToastProvider>
       </Windmill>
     </Suspense>
   </SidebarProvider>,
