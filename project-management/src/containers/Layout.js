@@ -16,6 +16,7 @@ import ThemedSuspense from "../components/ThemedSuspense";
 import { SidebarContext } from "../context/SidebarContext";
 import Dashboard from "../pages/Dashboard";
 import Cookie from "js-cookie";
+import TeamManagement from "../pages/Team/TeamManagement";
 
 const Page404 = lazy(() => import("../pages/404"));
 
@@ -76,6 +77,7 @@ function Layout() {
               })}
               <Route path="/" element={<Navigate to="dashboard" />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/team" element={<TeamManagement />} />
               <Route path="*" element={<Page404 />} />
             </Routes>
           </Suspense>
