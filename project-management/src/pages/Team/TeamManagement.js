@@ -1,26 +1,34 @@
-import React, { useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import fetchWithAuth from "../../utils/callApi";
 import PageTitle from "../../components/Typography/PageTitle";
 import RoundIcon from "../../components/RoundIcon";
 import { CartIcon, ChatIcon, MoneyIcon, PeopleIcon } from "../../icons";
 import TeamCard from "../../components/Team/TeamCard";
 import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
   Label,
-  Input,
+  //   Input,
 } from "@windmill/react-ui";
-
+import { Input, Modal } from "antd";
+import { Select, Spin } from "antd";
 const TeamManagement = () => {
+    let timeoutId;
+  const [options, setOptions] = useState([{
+    value: "jack",
+    label: "Jack",
+  },
+  {
+    value: "lucy",
+    label: "Lucy",
+  },
+  {
+    value: "tom",
+    label: "Tom",
+  },]);
+  const [value, setValue] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   function openModal() {
     setIsModalOpen(true);
   }
-
   function closeModal() {
     setIsModalOpen(false);
   }
@@ -33,6 +41,12 @@ const TeamManagement = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
+  };
+  const callLog = (value) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+        console.log("OK checker: " + value);
+    }, 1000);
   };
   return (
     <>
@@ -82,46 +96,33 @@ const TeamManagement = () => {
           />
         </TeamCard>
       </div>
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <ModalHeader>Thêm mới phòng ban</ModalHeader>
-        <ModalBody>
-          <Label>
-            <span>Tên phòng ban</span>
-            <Input className="mt-1" type="username" placeholder="Hội đồng" />
-          </Label>
-          <Label className="mt-4">
-            <span>Mô tả</span>
-            <Input className="mt-1" type="email" placeholder="hội đồng" />
-          </Label>
-          <Label className="mt-4">
-            <span>Quản lý</span>
-            <Input
-              className="mt-1"
-              placeholder="***************"
-              type="text"
-            />
-          </Label>
-        </ModalBody>
-        <ModalFooter>
-          <div className="hidden sm:block">
-            <Button layout="outline" onClick={closeModal}>
-              Cancel
-            </Button>
-          </div>
-          <div className="hidden sm:block">
-            <Button>Accept</Button>
-          </div>
-          <div className="block w-full sm:hidden">
-            <Button block size="large" layout="outline" onClick={closeModal}>
-              Cancel
-            </Button>
-          </div>
-          <div className="block w-full sm:hidden">
-            <Button block size="large">
-              Accept
-            </Button>
-          </div>
-        </ModalFooter>
+      <Modal
+        title="Basic Modal"
+        open={isModalOpen}
+        onOk={closeModal}
+        onCancel={closeModal}
+      >
+        <Label>
+          <span>Tên phòng ban</span>
+          <Input className="mt-1" type="username" placeholder="Hội đồng" />
+        </Label>
+        <Label className="mt-4">
+          <span>Mô tả</span>
+          <Input className="mt-1" type="email" placeholder="hội đồng" />
+        </Label>
+        <Label className="mt-4">
+          <span className="">Quản lý</span>
+          <Select
+            //   className="block w-full text-sm focus:outline-none dark:text-gray-300 form-input leading-5 focus:border-purple-400 dark:border-gray-600 focus:shadow-outline-purple dark:focus:border-gray-600 dark:focus:shadow-outline-gray dark:bg-gray-700 mt-1"
+            className="w-full mt-1"
+            showSearch
+            labelInValue
+            filterOption={false}
+            onSearch={callLog}
+            notFoundContent={false ? <Spin size="small" /> : null}
+            options={options}
+          />
+        </Label>
       </Modal>
     </>
   );

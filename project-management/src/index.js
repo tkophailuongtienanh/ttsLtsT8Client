@@ -8,6 +8,7 @@ import ThemedSuspense from "./components/ThemedSuspense";
 import { Windmill } from "@windmill/react-ui";
 import * as serviceWorker from "./serviceWorker";
 import { ToastProvider } from "./context/ToastContext";
+import { Button, ConfigProvider, Input, Select, theme } from "antd";
 
 // if (process.env.NODE_ENV !== 'production') {
 //   const axe = require('react-axe')
@@ -17,11 +18,41 @@ import { ToastProvider } from "./context/ToastContext";
 ReactDOM.render(
   <SidebarProvider>
     <Suspense fallback={<ThemedSuspense />}>
-      <Windmill dark usePreferences>
-        <ToastProvider>
-          <App />
-        </ToastProvider>
-      </Windmill>
+      <ConfigProvider
+        theme={{
+          // 1. Use dark algorithm
+          algorithm: theme.darkAlgorithm,
+
+          // 2. Combine dark algorithm and compact algorithm
+          components: {
+            Select: {
+              selectorBg: "#24262d",
+            },
+            Input: {
+              colorBgContainer:"#24262d",
+            },
+            Modal:{
+              contentBg: "#1a1c23",
+              headerBg: "#1a1c23",
+            },
+            Card:{
+              colorBgContainer : "#1a1c23"
+            },
+            Table:{
+              colorBgContainer: "#1a1c23"
+            },
+            Button:{
+              colorPrimary:"#7e3af2"
+            }
+          },
+        }}
+      >
+        <Windmill dark usePreferences>
+          <ToastProvider>
+            <App />
+          </ToastProvider>
+        </Windmill>
+      </ConfigProvider>
     </Suspense>
   </SidebarProvider>,
   document.getElementById("root")

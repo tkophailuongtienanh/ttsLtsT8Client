@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import ImageLight from "../assets/img/login-office.jpeg";
-import ImageDark from "../assets/img/login-office-dark.jpeg";
-import { GithubIcon, TwitterIcon } from "../icons";
+import ImageLight from "../../assets/img/login-office.jpeg";
+import ImageDark from "../../assets/img/login-office-dark.jpeg";
+import { GithubIcon, TwitterIcon } from "../../icons";
 import { Label, Input, Button } from "@windmill/react-ui";
 import Cookie from "js-cookie";
-import { fetchWithAuth, fetchApi } from "../utils/callApi";
-import checkNull from "../utils/formValid";
-import { useToast } from "../context/ToastContext";
+import { fetchWithAuth, fetchApi } from "../../utils/callApi";
+import checkNull from "../../utils/formValid";
+import { useToast } from "../../context/ToastContext";
 
 function Login() {
   const navigate = useNavigate();

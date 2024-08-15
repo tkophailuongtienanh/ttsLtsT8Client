@@ -17,6 +17,7 @@ import { SidebarContext } from "../context/SidebarContext";
 import Dashboard from "../pages/Dashboard";
 import Cookie from "js-cookie";
 import TeamManagement from "../pages/Team/TeamManagement";
+import TeamDetail from "../pages/Team/TeamDetail";
 
 const Page404 = lazy(() => import("../pages/404"));
 
@@ -78,6 +79,7 @@ function Layout() {
               <Route path="/" element={<Navigate to="dashboard" />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/team" element={<TeamManagement />} />
+              <Route path="/team/:id" element={<TeamDetail />} />
               <Route path="*" element={<Page404 />} />
             </Routes>
           </Suspense>

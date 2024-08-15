@@ -7,13 +7,13 @@ import {
 } from "react-router-dom";
 import AccessibleNavigationAnnouncer from "./components/AccessibleNavigationAnnouncer";
 import Toast from "./components/Toast";
-import ResetPassword from "./pages/ResetPassword";
+import ResetPassword from "./pages/Authen/ResetPassword";
 
 const Layout = lazy(() => import("./containers/Layout"));
-const Login = lazy(() => import("./pages/Login"));
-const ConfirmEmail = lazy(() => import("./pages/ConfirmEmail"));
-const CreateAccount = lazy(() => import("./pages/CreateAccount"));
-const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const Login = lazy(() => import("./pages/Authen/Login"));
+const ConfirmEmail = lazy(() => import("./pages/Authen/ConfirmEmail"));
+const CreateAccount = lazy(() => import("./pages/Authen/CreateAccount"));
+const ForgotPassword = lazy(() => import("./pages/Authen/ForgotPassword"));
 
 function App() {
   return (

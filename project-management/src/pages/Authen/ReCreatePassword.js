@@ -1,14 +1,14 @@
 import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
-import ImageLight from "../assets/img/forgot-password-office.jpeg";
-import ImageDark from "../assets/img/forgot-password-office-dark.jpeg";
+import ImageLight from "../../assets/img/forgot-password-office.jpeg";
+import ImageDark from "../../assets/img/forgot-password-office-dark.jpeg";
 import { Label, Input, Button } from "@windmill/react-ui";
-import { fetchWithAuth, fetchApi } from "../utils/callApi";
-import checkNull from "../utils/formValid";
-import { useToast } from "../context/ToastContext";
+import { fetchWithAuth, fetchApi } from "../../utils/callApi";
+import checkNull from "../../utils/formValid";
+import { useToast } from "../../context/ToastContext";
 
-function ResetPassword() {
+function ReCreatePassword() {
   const { addToast } = useToast();
   const passRef = useRef();
   const confirmRef = useRef();
@@ -35,7 +35,7 @@ function ResetPassword() {
           window.location.href = "/";
         },
         () => {
-          addToast("danger",data.message,10000)
+          addToast("danger", data.message, 10000);
         }
       );
       console.log(data);
@@ -43,27 +43,32 @@ function ResetPassword() {
     callApi();
   };
   useEffect(() => {
-    if (email != null && otp != null) {
+    try {
+      const url = "https://localhost:7242/api/Authentication/Get";
+      const headers = {
+        "Content-Type": "application/json",
+      };
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      console.log("headers['Authorization']", headers["Authorization"]);
+
+      // Thiết lập cấu hình cho fetch
+      const config = {
+        method: "GET", // Mặc định là GET
+        headers,
+      };
+
       const callApi = async () => {
-        const data = await fetchApi(
-          "Authentication/ConfirmResetPassword",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: { email: email, otp: otp },
-          },
-          null,
-          () => {
-            window.location.href = "/app";
-          }
-        );
-        console.log(data);
+        const response = await fetch(url, config);
+        if (response.ok) {
+          var data = await response.json();
+          console.log("data", data);
+        } else console.log("check", response);
       };
       callApi();
-    }
-  }, []);
+    } catch (error) {}
+  }, [token]);
   return (
     <div className="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900">
       <div className="flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800">
@@ -123,4 +128,4 @@ function ResetPassword() {
   );
 }
 
-export default ResetPassword;
+export default ReCreatePassword;

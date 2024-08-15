@@ -1,12 +1,11 @@
 import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 
-import ImageLight from "../assets/img/create-account-office.jpeg";
-import ImageDark from "../assets/img/create-account-office-dark.jpeg";
-import { GithubIcon, TwitterIcon } from "../icons";
+import ImageLight from "../../assets/img/create-account-office.jpeg";
+import ImageDark from "../../assets/img/create-account-office-dark.jpeg";
 import { Input, Label, Button } from "@windmill/react-ui";
-import { useToast } from "../context/ToastContext";
-import fetchWithAuth from '../utils/callApi';
+import { useToast } from "../../context/ToastContext";
+import fetchWithAuth from '../../utils/callApi';
 import Cookie from "js-cookie";
 var count;
 const checkNull = (ref)=>{

@@ -1,12 +1,12 @@
 import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 
-import ImageLight from "../assets/img/forgot-password-office.jpeg";
-import ImageDark from "../assets/img/forgot-password-office-dark.jpeg";
+import ImageLight from "../../assets/img/forgot-password-office.jpeg";
+import ImageDark from "../../assets/img/forgot-password-office-dark.jpeg";
 import { Label, Input, Button } from "@windmill/react-ui";
-import { fetchWithAuth, fetchApi } from "../utils/callApi";
-import checkNull from "../utils/formValid";
-import { useToast } from "../context/ToastContext";
+import { fetchWithAuth, fetchApi } from "../../utils/callApi";
+import checkNull from "../../utils/formValid";
+import { useToast } from "../../context/ToastContext";
 
 function ForgotPassword() {
   const { addToast } = useToast();
