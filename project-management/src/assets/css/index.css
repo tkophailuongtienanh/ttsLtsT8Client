@@ -8,10 +8,10 @@
   cursor: pointer;
   border-radius: 3px;
 }
-.hell{
+.hell {
   color: red;
 }
-.basis-10{
+.basis-10 {
   flex-basis: 10rem;
 }
 .basis-1\/2 {
@@ -94,4 +94,13 @@
 }
 .basis-full {
   flex-basis: 100%;
+}
+.top-4 {
+  top: 1rem;
+}
+.top-10 {
+  top: 2.5rem;
+}
+.top-12 {
+  top: 3rem;
 }

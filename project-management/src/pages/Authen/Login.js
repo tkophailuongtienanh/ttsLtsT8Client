@@ -44,7 +44,6 @@ function Login() {
             navigate("/confirmEmail");
           } else window.location.href = "/app";
         }
-        console.log("check", response);
       };
       callApi();
     } catch (error) {}

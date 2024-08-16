@@ -18,6 +18,7 @@ import Dashboard from "../pages/Dashboard";
 import Cookie from "js-cookie";
 import TeamManagement from "../pages/Team/TeamManagement";
 import TeamDetail from "../pages/Team/TeamDetail";
+import ReCreatePassword from "../pages/Authen/ReCreatePassword";
 
 const Page404 = lazy(() => import("../pages/404"));
 
@@ -46,7 +47,7 @@ function Layout() {
         if (!response.ok) {
           navigate("/login");
         }
-        console.log("check", response);
+        console.log("authen: ", response);
       };
       callApi();
     } catch (error) {}
@@ -78,6 +79,7 @@ function Layout() {
               })}
               <Route path="/" element={<Navigate to="dashboard" />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/changePassword" element={<ReCreatePassword />} />
               <Route path="/team" element={<TeamManagement />} />
               <Route path="/team/:id" element={<TeamDetail />} />
               <Route path="*" element={<Page404 />} />
