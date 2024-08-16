@@ -14,7 +14,6 @@ function Login() {
   const navigate = useNavigate();
   const { addToast } = useToast();
   const [token, setToken] = useState(Cookie.get("token"));
-  console.log("token", token);
   const emailRef = useRef();
   const passRef = useRef();
   useEffect(() => {
@@ -56,20 +55,21 @@ function Login() {
     };
     console.log("log", userLogin);
 
-    const data = await fetchApi("Authentication/Login", {
+    const response = await fetchApi("Authentication/Login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: userLogin,
     });
-    console.log(data);
 
-    if (data.token) {
+    const data = response.data;
+    if (response.code == "200") {
       Cookie.set("token", data.token);
       setToken(data.token);
-    } else if (data.errorCode) {
-      addToast("danger", data.message, 10000);
+    } else if (response.code) {
+      addToast(
+        "danger",
+        response.code + ": " + data.errorCode + "-" + data.message,
+        10000
+      );
     }
   };
   return (

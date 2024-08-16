@@ -25,7 +25,16 @@ function ConfirmEmail() {
         method: "POST",
         body: optRef.current.value,
       });
-      navigate("/app");
+      const data = response.data;
+      if (response.code == "200") {
+        navigate("/app");
+      } else if (response.code) {
+        addToast(
+          "danger",
+          response.code + ": " + data.errorCode + "-" + data.message,
+          10000
+        );
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -39,7 +48,7 @@ function ConfirmEmail() {
         const elapsed = Date.now() - lastSent;
         const remaining = parseInt(Math.max(0, 60000 - elapsed) / 1000); // 60000 ms = 1 minute
         setTimeRemaining(remaining);
-        if(remaining > 0){
+        if (remaining > 0) {
           disableRightBtn(btnRef);
         } else {
           enableRightBtn(btnRef);
@@ -59,16 +68,18 @@ function ConfirmEmail() {
       return;
     }
     const fetchData = async () => {
-      try {
-        const response = await fetchWithAuth(
-          "Authentication/ConfirmEmailInvoke"
+      const response = await fetchWithAuth("Authentication/ConfirmEmailInvoke");
+      const data = response.data;
+
+      if (response.code == "200") {
+        setLastSent(Date.now());
+        addToast("success", data.message, 30000);
+      } else if (response.code) {
+        addToast(
+          "danger",
+          response.code + ": " + data.errorCode + "-" + data.message,
+          10000
         );
-        if (response.message) {
-          setLastSent(Date.now());
-          addToast("success", response.message, 30000);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
       }
     };
     fetchData();

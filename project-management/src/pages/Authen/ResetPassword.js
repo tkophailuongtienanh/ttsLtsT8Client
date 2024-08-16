@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import ImageLight from "../../assets/img/forgot-password-office.jpeg";
 import ImageDark from "../../assets/img/forgot-password-office-dark.jpeg";
@@ -11,6 +11,7 @@ import { useToast } from "../../context/ToastContext";
 function ResetPassword() {
   const { addToast } = useToast();
   const passRef = useRef();
+  const navigate = useNavigate();
   const confirmRef = useRef();
   const params = new URLSearchParams(window.location.search);
   const email = params.get("email");
@@ -22,48 +23,28 @@ function ResetPassword() {
       return;
     }
     const callApi = async () => {
-      const data = await fetchApi(
-        "Authentication/ResetPassword",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: { email: email, otp: otp, password: passRef.current.value },
-        },
-        () => {
-          window.location.href = "/";
-        },
-        () => {
-          addToast("danger",data.message,10000)
-        }
-      );
-      console.log(data);
+      const response = await fetchApi("Authentication/ResetPassword", {
+        method: "POST",
+        body: { email: email, otp: otp, password: passRef.current.value },
+      });
+      const data = response.data;
+      if (response.code == "200") {
+        addToast(
+          "success",
+          "Reset mật khẩu thành công, vui lòng đăng nhập lại",
+          10000
+        );
+        navigate("/");
+      } else if (response.code) {
+        addToast(
+          "danger",
+          response.code + ": " + data.errorCode + "-" + data.message,
+          10000
+        );
+      }
     };
     callApi();
   };
-  useEffect(() => {
-    if (email != null && otp != null) {
-      const callApi = async () => {
-        const data = await fetchApi(
-          "Authentication/ConfirmResetPassword",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: { email: email, otp: otp },
-          },
-          null,
-          () => {
-            window.location.href = "/app";
-          }
-        );
-        console.log(data);
-      };
-      callApi();
-    }
-  }, []);
   return (
     <div className="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900">
       <div className="flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800">

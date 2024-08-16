@@ -30,23 +30,17 @@ export const fetchWithAuth = async (
     config.body = JSON.stringify(options.body);
   }
   const response = await fetch(url, config);
-  if (!response.ok) {
+  
+  if (["401"].includes(response.status.toString())) {
     console.log("Error while fetching", response);
     if (failCallBack) failCallBack();
     return response;
-  }
-  try {
-    return response.json();
-  } catch (error) {
-    return response;
+  } else {
+    const data = await response.json()
+    return { code: response.status, data: data };
   }
 };
-export const fetchApi = async (
-  endpoint,
-  options = {},
-  successCallback = null,
-  failCallBack = null
-) => {
+export const fetchApi = async (endpoint, options = {}, failCallBack = null) => {
   const url = `${BASE_URL}${endpoint}`;
 
   const headers = {
@@ -67,17 +61,13 @@ export const fetchApi = async (
   }
   const response = await fetch(url, config);
 
-  if (!response.ok) {
+  if (["401"].includes(response.status.toString())) {
     console.log("Error while fetching", response);
     if (failCallBack) failCallBack();
-  }
-
-  try {
-    if (successCallback) successCallback();
-
-    return response.json();
-  } catch (error) {
     return response;
+  } else {
+    const data = await response.json()
+    return { code: response.status, data: data };
   }
 };
 export default fetchWithAuth;

@@ -5,23 +5,25 @@ import ImageLight from "../../assets/img/create-account-office.jpeg";
 import ImageDark from "../../assets/img/create-account-office-dark.jpeg";
 import { Input, Label, Button } from "@windmill/react-ui";
 import { useToast } from "../../context/ToastContext";
-import fetchWithAuth from '../../utils/callApi';
+import fetchWithAuth from "../../utils/callApi";
 import Cookie from "js-cookie";
 var count;
-const checkNull = (ref)=>{
-  if (ref.current.value!=null && ref.current.value!='') {
+const checkNull = (ref) => {
+  if (ref.current.value != null && ref.current.value != "") {
     resetField(ref);
   } else {
     count++;
     setError(ref);
   }
-}
-const resetField = (ref) =>{
-  ref.current.className="block w-full text-sm focus:outline-none dark:text-gray-300 form-input leading-5 focus:border-purple-400 dark:border-gray-600 focus:shadow-outline-purple dark:focus:border-gray-600 dark:focus:shadow-outline-gray dark:bg-gray-700 mt-1";
-}
-const setError = (ref)=>{
-  ref.current.className="block w-full text-sm focus:outline-none dark:text-gray-300 form-input leading-5 border-red-600 dark:bg-gray-700 focus:border-red-400 dark:focus:border-red-400 focus:shadow-outline-red dark:focus:shadow-outline-red mt-1";
-}
+};
+const resetField = (ref) => {
+  ref.current.className =
+    "block w-full text-sm focus:outline-none dark:text-gray-300 form-input leading-5 focus:border-purple-400 dark:border-gray-600 focus:shadow-outline-purple dark:focus:border-gray-600 dark:focus:shadow-outline-gray dark:bg-gray-700 mt-1";
+};
+const setError = (ref) => {
+  ref.current.className =
+    "block w-full text-sm focus:outline-none dark:text-gray-300 form-input leading-5 border-red-600 dark:bg-gray-700 focus:border-red-400 dark:focus:border-red-400 focus:shadow-outline-red dark:focus:shadow-outline-red mt-1";
+};
 const CreateAccount = () => {
   const { addToast } = useToast();
   const usernameRef = useRef();
@@ -32,7 +34,7 @@ const CreateAccount = () => {
   const dobRef = useRef();
   const phoneRef = useRef();
   const RegisterClick = async () => {
-    count=0;
+    count = 0;
     checkNull(usernameRef);
     checkNull(emailRef);
     checkNull(passwordRef);
@@ -40,7 +42,7 @@ const CreateAccount = () => {
     checkNull(fullnameRef);
     checkNull(dobRef);
     checkNull(phoneRef);
-    if(count>0) return;
+    if (count > 0) return;
     const userRegister = {
       UserName: usernameRef.current.value,
       Email: emailRef.current.value,
@@ -49,7 +51,7 @@ const CreateAccount = () => {
       FullName: fullnameRef.current.value,
       DateOfBirth: dobRef.current.value,
     };
-    if(passwordRef.current.value != confirmPasswordRef.current.value){
+    if (passwordRef.current.value != confirmPasswordRef.current.value) {
       addToast(
         "danger",
         "Password và Confirm Password không khớp nhau!",
@@ -58,14 +60,20 @@ const CreateAccount = () => {
       return;
     }
     try {
-      const data = await fetchWithAuth('Authentication/Register', {
-        method: 'POST',
+      const response = await fetchWithAuth("Authentication/Register", {
+        method: "POST",
         body: userRegister,
       });
-      if(data.token){
-        Cookie.set('token', data.token, { expires: 1 });
-        console.log(data.token);
+      const data = response.data;
+      if (response.code == "200") {
+        Cookie.set("token", data.token, { expires: 1 });
         window.location.href = "/confirmEmail";
+      } else if (response.code) {
+        addToast(
+          "danger",
+          response.code + ": " + data.errorCode + "-" + data.message,
+          10000
+        );
       }
     } catch (err) {
       console.log(err);

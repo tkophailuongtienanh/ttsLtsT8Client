@@ -26,22 +26,27 @@ function ReCreatePassword() {
       return;
     }
     const callApi = async () => {
-      const data = await fetchWithAuth(
+      const response = await fetchWithAuth(
         "Authentication/ChangePassword",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
           body: passRef.current.value,
         },
         () => {
           addToast("danger", "lỗi", 10000);
         }
       );
-      addToast("success", "Đổi mật khẩu thành công", 10000);
-      console.log("2:", data);
-      Cookie.set("token", data.token);
+      const data = response.data;
+      if (response.code == "200") {
+        addToast("success", "Đổi mật khẩu thành công", 10000);
+        Cookie.set("token", data.token);
+      } else if (response.code) {
+        addToast(
+          "danger",
+          response.code + ": " + data.errorCode + "-" + data.message,
+          10000
+        );
+      }
     };
     callApi();
   });
@@ -50,12 +55,7 @@ function ReCreatePassword() {
       const callAp2i = async () => {
         const data = await fetchWithAuth(
           "Authentication/Get",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
+          { },
           () => {
             addToast("danger", "Vui lòng đăng nhập lại để tiếp tục", 10000);
             navigate("/login");

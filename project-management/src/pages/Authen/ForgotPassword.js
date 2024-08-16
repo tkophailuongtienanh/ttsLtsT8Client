@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import ImageLight from "../../assets/img/forgot-password-office.jpeg";
 import ImageDark from "../../assets/img/forgot-password-office-dark.jpeg";
@@ -10,19 +10,29 @@ import { useToast } from "../../context/ToastContext";
 
 function ForgotPassword() {
   const { addToast } = useToast();
+  const navigate = useNavigate();
   const emailRef = useRef();
   const btnClick = () => {
     if (!checkNull(emailRef)) return;
     const callApi = async () => {
-      const data = await fetchApi("Authentication/ForgotPassword", {
+      const response = await fetchApi("Authentication/ForgotPassword", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: emailRef.current.value,
       });
-      console.log(data);
-      addToast("success", data.message, 30000);
+      const data = response.data;
+      if (response.code == "200") {
+        addToast("success", data.message, 15000);
+        navigate("/login");
+      } else if (response.code) {
+        addToast(
+          "danger",
+          response.code + ": " + data.errorCode + "-" + data.message,
+          10000
+        );
+      }
     };
     callApi();
   };
