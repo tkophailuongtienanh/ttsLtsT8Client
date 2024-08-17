@@ -77,6 +77,7 @@ const TeamDetail = () => {
           <div className="basis-1/4">
             <label>Ngày tạo</label>
             <Input
+              disabled
               type="date"
               className="w-full mt-1"
               placeholder="Phòng công vụ"
@@ -85,6 +86,7 @@ const TeamDetail = () => {
           <div className="basis-1/4">
             <label>Ngày cập nhật</label>
             <Input
+            disabled
               type="date"
               className="w-full mt-1"
               placeholder="Phòng công vụ"

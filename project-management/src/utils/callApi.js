@@ -30,13 +30,13 @@ export const fetchWithAuth = async (
     config.body = JSON.stringify(options.body);
   }
   const response = await fetch(url, config);
-  
+
   if (["401"].includes(response.status.toString())) {
     console.log("Error while fetching", response);
     if (failCallBack) failCallBack();
     return response;
   } else {
-    const data = await response.json()
+    const data = await response.json();
     return { code: response.status, data: data };
   }
 };
@@ -66,7 +66,35 @@ export const fetchApi = async (endpoint, options = {}, failCallBack = null) => {
     if (failCallBack) failCallBack();
     return response;
   } else {
-    const data = await response.json()
+    const data = await response.json();
+    return { code: response.status, data: data };
+  }
+};
+export const getWithAuth = async (endpoint, data, failCallBack = null) => {
+  const token = Cookie.get("token");
+  const url = `${BASE_URL}${endpoint}${data ? "?" + data : ""}`;
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  // Thiết lập cấu hình cho fetch
+  const config = {
+    method: "GET",
+    headers,
+  };
+
+  const response = await fetch(url, config);
+
+  if (["401"].includes(response.status.toString())) {
+    console.log("Error while fetching", response);
+    if (failCallBack) failCallBack();
+    return response;
+  } else {
+    const data = await response.json();
     return { code: response.status, data: data };
   }
 };

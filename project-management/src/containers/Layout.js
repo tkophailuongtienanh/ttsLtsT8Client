@@ -36,7 +36,6 @@ function Layout() {
       if (token) {
         headers["Authorization"] = `Bearer ${token}`;
       }
-      console.log("headers['Authorization']", headers["Authorization"]);
       // Thiết lập cấu hình cho fetch
       const config = {
         method: "GET", // Mặc định là GET
@@ -47,7 +46,6 @@ function Layout() {
         if (!response.ok) {
           navigate("/login");
         }
-        console.log("authen: ", response);
       };
       callApi();
     } catch (error) {}
