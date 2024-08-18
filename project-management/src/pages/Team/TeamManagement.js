@@ -59,6 +59,7 @@ const TeamManagement = () => {
         setName("");
         setDes("");
         setMan(null);
+        setIsModalOpen(false);
         loadTeamsData();
       } else if (response.code) {
         addToast(
@@ -114,9 +115,9 @@ const TeamManagement = () => {
       }
     } catch (error) {}
   };
-  const editBtnClick = useCallback((teamId)=>{
-    navigate(""+teamId);
-  })
+  const editBtnClick = useCallback((teamId) => {
+    navigate("" + teamId);
+  });
   const deleteBtnClick = useCallback(async (teamId) => {
     try {
       if (window.confirm("Bạn có chắc muốn xóa Phòng ban này không?")) {
@@ -126,7 +127,6 @@ const TeamManagement = () => {
         });
         console.log(response.data);
         loadTeamsData();
-
       }
     } catch (error) {}
   });
@@ -154,8 +154,12 @@ const TeamManagement = () => {
             detail={team.description}
             numberOfMember={team.numberOfMember}
             manager={team.manager}
-            editCallBack={() => {editBtnClick(team.id)}}
-            deleteCallBack={() => {deleteBtnClick(team.id)}}
+            editCallBack={() => {
+              editBtnClick(team.id);
+            }}
+            deleteCallBack={() => {
+              deleteBtnClick(team.id);
+            }}
           ></TeamCard>
         ))}
       </div>

@@ -34,6 +34,7 @@ export const fetchWithAuth = async (
   if (["401"].includes(response.status.toString())) {
     console.log("Error while fetching", response);
     if (failCallBack) failCallBack();
+    window.location.href = "/Login";
     return response;
   } else {
     const data = await response.json();
