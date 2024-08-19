@@ -3,11 +3,14 @@ import {
   Card,
   DatePicker,
   Input,
+  Modal,
   Select,
   Space,
+  Spin,
   Table,
   Tag,
 } from "antd";
+import { Label } from "@windmill/react-ui";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import fetchWithAuth, { getWithAuth } from "../../utils/callApi";
@@ -18,10 +21,22 @@ const TeamDetail = () => {
   const { addToast } = useToast();
   const [search, setSearch] = useState("");
   const [name, setName] = useState("");
+  const [dataChange, setDataChange] = useState(false);
   const [description, setDescription] = useState("");
   const [team, setTeam] = useState({});
   const [teamMembers, setTeamMembers] = useState([]);
   const [manager, setManager] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [member, setMember] = useState(null);
+  const [options, setOptions] = useState([]);
+  let timeoutId;
+
+  useEffect(() => {
+    if (name != team.name || description != team.description)
+      setDataChange(true);
+    else setDataChange(false);
+  });
+
   const columns = [
     {
       title: "ID",
@@ -82,7 +97,7 @@ const TeamDetail = () => {
       const data = response.data;
       if (response.code == "200") {
         console.log(data);
-        addToast("success", "Thành công", 10000);
+        addToast("success", "Thành công", 5000);
         loadData();
         searchTeams(search);
       } else if (response.code) {
@@ -103,7 +118,7 @@ const TeamDetail = () => {
       const data = response.data;
       if (response.code == "200") {
         console.log(data);
-        addToast("success", "Thành công", 10000);
+        addToast("success", "Thành công", 5000);
         loadData();
         searchTeams(search);
       } else if (response.code) {
@@ -120,6 +135,8 @@ const TeamDetail = () => {
       const response = await getWithAuth("Team/GetById?teamId=" + id);
       const data = response.data;
       if (response.code == "200") {
+        console.log(data);
+
         setTeam(data);
         setName(data.name);
         setManager(data.manager);
@@ -163,6 +180,106 @@ const TeamDetail = () => {
   const btnSearchClick = () => {
     searchTeams(search);
   };
+  function openModal() {
+    setOptions([]);
+    setIsModalOpen(true);
+  }
+  function closeModal() {
+    console.log("ok");
+    setIsModalOpen(false);
+  }
+  async function onBtnClick() {
+    try {
+      let selectedValue = [];
+      member.forEach((element) => {
+        selectedValue.push(element.value);
+      });
+      const response = await fetchWithAuth("Team/AddMember", {
+        method: "POST",
+        body: { userIds: selectedValue, teamId: id },
+      });
+      const data = response.data;
+      if (response.code == "200") {
+        setIsModalOpen(false);
+        setMember(null);
+        loadData();
+        searchTeams("");
+      } else if (response.code) {
+        addToast(
+          "danger",
+          response.code + ": " + data.errorCode + "-" + data.message,
+          10000
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const callLog = (value) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      // console.log("OK checker: " + value);
+      searchUserList(value);
+    }, 1000);
+  };
+  const searchUserList = async (str) => {
+    try {
+      const response = await getWithAuth(
+        "Users/SearchByNameOrEmail",
+        str ? "name=" + str : ""
+      );
+      const data = response.data;
+      if (response.code == "200") {
+        console.log(data);
+
+        data.forEach((element) => {
+          element.value = element.id;
+          element.label = element.fullName;
+          if (element.teamId != null) {
+            if (element.teamId == id)
+              element.label = element.fullName + "(Đã có)";
+            element.disabled = true;
+          }
+        });
+        setOptions(data);
+      } else if (response.code) {
+        addToast(
+          "danger",
+          response.code + ": " + data.errorCode + "-" + data.message,
+          10000
+        );
+      }
+    } catch (error) {}
+  };
+  const saveChange = async () => {
+    try {
+      const response = await fetchWithAuth("Team/UpdateTeam", {
+        method: "POST",
+        body: {
+          id: id,
+          name: name,
+          description: description,
+          managerId: manager.id,
+        },
+      });
+      const data = response.data;
+      console.log(data);
+      if (response.code == "200") {
+        loadData();
+        addToast(
+          "success",
+          "Lưu thay đổi thành công",
+          5000
+        );
+      } else if (response.code) {
+        addToast(
+          "danger",
+          response.code + ": " + data.errorCode + "-" + data.message,
+          10000
+        );
+      }
+    } catch (error) {}
+  };
   useEffect(() => {
     loadData();
     searchTeams("");
@@ -173,7 +290,7 @@ const TeamDetail = () => {
         <p className="my-6 text-2xl font-semibold text-gray-200">
           Thông tin phòng ban
         </p>
-        <Button type="primary" size="large">
+        <Button type="primary" size="large" onClick={openModal}>
           <i className="fa-solid fa-plus"></i>Thêm người
         </Button>
       </div>
@@ -256,6 +373,11 @@ const TeamDetail = () => {
             ></Input>
           </div>
         </div>
+        <div className={dataChange ? "flex justify-end mt-3" : "hidden"}>
+          <Button onClick={saveChange} type="primary" size="large">
+            Lưu thay đổi
+          </Button>
+        </div>
       </Card>
       <div className=" flex justify-between">
         <p className="my-6 text-xl font-semibold text-gray-200">
@@ -280,6 +402,30 @@ const TeamDetail = () => {
         </Button>
         <Table columns={columns} dataSource={teamMembers} />
       </Card>
+      <Modal
+        title="Thêm người dùng vào phòng ban"
+        open={isModalOpen}
+        onOk={onBtnClick}
+        onCancel={closeModal}
+      >
+        <Label className="mt-4">
+          <span className="">Người dùng</span>
+          <Select
+            mode="multiple"
+            allowClear
+            value={member}
+            onChange={(value) => setMember(value)}
+            //   className="block w-full text-sm focus:outline-none dark:text-gray-300 form-input leading-5 focus:border-purple-400 dark:border-gray-600 focus:shadow-outline-purple dark:focus:border-gray-600 dark:focus:shadow-outline-gray dark:bg-gray-700 mt-1"
+            className="w-full mt-1"
+            showSearch
+            labelInValue
+            filterOption={false}
+            onSearch={callLog}
+            notFoundContent={false ? <Spin size="small" /> : null}
+            options={options}
+          />
+        </Label>
+      </Modal>
     </>
   );
 };
