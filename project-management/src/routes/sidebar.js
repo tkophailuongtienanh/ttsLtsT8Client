@@ -15,6 +15,7 @@ const routes = [
     path: "/app/team", // the url
     icon: "PeopleIcon", // the component being exported from icons/index.js
     name: "Phòng ban", // name that appear in Sidebar
+    role:[6]
   },
   {
     path: "/app/forms",

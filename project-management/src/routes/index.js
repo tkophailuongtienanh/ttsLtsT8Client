@@ -30,6 +30,7 @@ const routes = [
   {
     path: "/team", // the url
     component: Team, // view rendered
+    role:[6]
   },
   {
     path: "/forms",

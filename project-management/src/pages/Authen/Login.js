@@ -62,7 +62,10 @@ function Login() {
 
     const data = response.data;
     if (response.code == "200") {
+      console.log(data);
+
       Cookie.set("token", data.token);
+      Cookie.set("role", JSON.stringify(data.role));
       setToken(data.token);
     } else if (response.code) {
       addToast(
