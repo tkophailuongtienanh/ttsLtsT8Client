@@ -22,7 +22,7 @@ export const fetchWithAuth = async (
   }
   // Thiết lập cấu hình cho fetch
   const config = {
-    method: options.method || "GET", // Mặc định là GET
+    method: options.method || "POST", // Mặc định là GET
     headers: headers,
   };
   // Nếu có body, chuyển đổi thành JSON

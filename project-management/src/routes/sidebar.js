@@ -12,10 +12,22 @@ const routes = [
     name: "Dashboard", // name that appear in Sidebar
   },
   {
+    path: "/app/Users", // the url
+    icon: "PeopleIcon", // the component being exported from icons/index.js
+    name: "Người dùng", // name that appear in Sidebar
+    role:[6]
+  },
+  {
     path: "/app/team", // the url
     icon: "PeopleIcon", // the component being exported from icons/index.js
     name: "Phòng ban", // name that appear in Sidebar
     role:[6]
+  },
+  {
+    path: "/app/projects", // the url
+    icon: "PeopleIcon", // the component being exported from icons/index.js
+    name: "Dự án", // name that appear in Sidebar
+    // role:[6]
   },
   {
     path: "/app/forms",

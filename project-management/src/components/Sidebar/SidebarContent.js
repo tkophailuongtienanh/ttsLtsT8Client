@@ -29,10 +29,6 @@ function SidebarContent() {
       </a>
       <ul className="mt-6">
         {routes.map((route) => {
-          console.log(
-            route.name,
-            route.role == null || displayRoute(route.role)
-          );
           return route.role == null || displayRoute(route.role) ? (
             route.routes ? (
               <SidebarSubmenu route={route} key={route.name} />

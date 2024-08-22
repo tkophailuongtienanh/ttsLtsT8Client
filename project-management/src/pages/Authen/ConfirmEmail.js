@@ -6,7 +6,7 @@ import ImageDark from "../../assets/img/login-office-dark.jpeg";
 import { GithubIcon, TwitterIcon } from "../../icons";
 import { Label, Input, Button } from "@windmill/react-ui";
 import Cookie from "js-cookie";
-import fetchWithAuth from "../../utils/callApi";
+import fetchWithAuth, { getWithAuth } from "../../utils/callApi";
 import { useToast } from "../../context/ToastContext";
 import { disableRightBtn, enableRightBtn } from "../../utils/formValid";
 
@@ -68,7 +68,7 @@ function ConfirmEmail() {
       return;
     }
     const fetchData = async () => {
-      const response = await fetchWithAuth("Authentication/ConfirmEmailInvoke");
+      const response = await getWithAuth("Authentication/ConfirmEmailInvoke");
       const data = response.data;
 
       if (response.code == "200") {

@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import ImageLight from "../../assets/img/forgot-password-office.jpeg";
 import ImageDark from "../../assets/img/forgot-password-office-dark.jpeg";
 import { Label, Input, Button } from "@windmill/react-ui";
-import { fetchWithAuth, fetchApi } from "../../utils/callApi";
+import { fetchWithAuth, fetchApi, getWithAuth } from "../../utils/callApi";
 import checkNull from "../../utils/formValid";
 import Cookie from "js-cookie";
 import { useToast } from "../../context/ToastContext";
@@ -53,9 +53,9 @@ function ReCreatePassword() {
   useEffect(() => {
     try {
       const callAp2i = async () => {
-        const data = await fetchWithAuth(
+        const data = await getWithAuth(
           "Authentication/Get",
-          { },
+          null,
           () => {
             addToast("danger", "Vui lòng đăng nhập lại để tiếp tục", 10000);
             navigate("/login");
