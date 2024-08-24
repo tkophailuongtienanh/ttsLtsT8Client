@@ -29,8 +29,6 @@ export const fetchWithAuth = async (
   if (options.body) {
     config.body = JSON.stringify(options.body);
   }
-  console.log("check");
-  
   const response = await fetch(url, config);
 
   if (["401"].includes(response.status.toString())) {

@@ -3,7 +3,8 @@ import { lazy } from "react";
 // use lazy for better code splitting, a.k.a. load faster
 const Dashboard = lazy(() => import("../pages/Dashboard"));
 const Team = lazy(() => import("../pages/Team/TeamManagement"));
-const Project = lazy(() => import("../pages/Project/ProjectList"));
+const Project = lazy(() => import("../pages/Project/ProjectList.js"));
+const ProjectDetail = lazy(() => import("../pages/Project/ProjectDetail"));
 const UserManagement = lazy(() => import("../pages/User/UserManagement"));
 const CustomerManagement = lazy(() => import("../pages/Customer/CustomerManagement"));
 const Forms = lazy(() => import("../pages/Forms"));
@@ -37,6 +38,10 @@ const routes = [
   {
     path: "/projects", // the url
     component: Project, // view rendered
+  },
+  {
+    path: "/projects/:id", // the url
+    component: ProjectDetail, // view rendered
   },
   {
     path: "/users", // the url
