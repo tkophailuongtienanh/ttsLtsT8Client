@@ -31,6 +31,9 @@ ReactDOM.render(
             Input: {
               colorBgContainer:"#24262d",
             },
+            DatePicker: {
+              colorBgContainer:"#24262d",
+            },
             Modal:{
               contentBg: "#1a1c23",
               headerBg: "#1a1c23",

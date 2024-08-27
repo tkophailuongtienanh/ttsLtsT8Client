@@ -71,6 +71,43 @@ export const fetchApi = async (endpoint, options = {}, failCallBack = null) => {
     return { code: response.status, data: data };
   }
 };
+export const fetchForm = async (
+  endpoint,
+  options = {},
+  failCallBack = () => {}
+) => {
+  const token = Cookie.get("token");
+  const url = `${BASE_URL}${endpoint}`;
+
+  const headers = {
+    // "Content-Type": "multipart/form-data",
+    ...options.headers,
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  // Thiết lập cấu hình cho fetch
+  const config = {
+    method: options.method || "POST", // Mặc định là GET
+    headers: headers,
+  };
+  // Nếu có body, chuyển đổi thành JSON
+  if (options.body) {
+    config.body = options.body;
+  }
+  const response = await fetch(url, config);
+
+  if (["401"].includes(response.status.toString())) {
+    console.log("Error while fetching", response);
+    if (failCallBack) failCallBack();
+    window.location.href = "/Login";
+    return response;
+  } else {
+    const data = await response.json();
+    return { code: response.status, data: data };
+  }
+};
 export const getWithAuth = async (endpoint, data, failCallBack = null) => {
   const token = Cookie.get("token");
   const url = `${BASE_URL}${endpoint}${data ? "?" + data : ""}`;

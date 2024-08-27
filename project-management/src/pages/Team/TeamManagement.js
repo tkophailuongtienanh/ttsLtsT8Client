@@ -11,10 +11,7 @@ import PageTitle from "../../components/Typography/PageTitle";
 import RoundIcon from "../../components/RoundIcon";
 import { CartIcon, ChatIcon, MoneyIcon, PeopleIcon } from "../../icons";
 import TeamCard from "../../components/Team/TeamCard";
-import {
-  Label,
-  //   Input,
-} from "@windmill/react-ui";
+import { Label } from "@windmill/react-ui";
 import { Input, Modal } from "antd";
 import { Select, Spin } from "antd";
 import { useToast } from "../../context/ToastContext";

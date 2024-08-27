@@ -2,10 +2,10 @@ import { Card, CardBody, Progress } from "antd";
 import Title from "antd/es/skeleton/Title";
 import React from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-const ProjectItem = () => {
+const ProjectItem = ({ id, name, lead, status, coverUrl }) => {
   const navigate = useNavigate();
   const forward1 = () => {
-    navigate("/app/projects/1");
+    navigate("/app/projects/" + id);
     // window.location.href = "/app";
   };
   return (
@@ -16,8 +16,7 @@ const ProjectItem = () => {
         <div
           className="bg-no-repeat bg-cover bg-center"
           style={{
-            backgroundImage:
-              "url(https://i.pinimg.com/736x/d6/46/02/d64602a7b954a8b2f09bac97a7911bf8.jpg)",
+            backgroundImage: "url(" + coverUrl + ")",
             width: "100%",
             paddingBottom: "100%",
           }}
@@ -26,15 +25,24 @@ const ProjectItem = () => {
       onClick={forward1}
     >
       <div className="flex flex-col">
-        <div className="font-bold text-lg">Dự án đầu tư vốn 1 tỷ con thỏ</div>
+        <div className="font-bold text-lg">{name}</div>
         <div className="">
-          Leader: <span className="font-bold">Lương Tiến Anh</span>
+          Leader: <span className="font-bold">{lead}</span>
         </div>
         <div className="mb-3">
-          Trạng thái: <span>Đang tiến hành</span>
+          Trạng thái:{" "}
+          <span>
+            {status <= 25
+              ? "Chờ duyệt"
+              : status <= 50
+              ? "Đang in"
+              : status <= 75
+              ? "Đang giao hàng"
+              : "Hoàn thành"}
+          </span>
         </div>
         <Progress
-          percent={60}
+          percent={status}
           percentPosition={{ align: "center", type: "inner" }}
           size={["100%", 20]}
         />
