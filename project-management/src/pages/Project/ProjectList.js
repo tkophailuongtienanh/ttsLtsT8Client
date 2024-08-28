@@ -8,6 +8,7 @@ import {
   DatePicker,
   Form,
   Input,
+  InputNumber,
   message,
   Modal,
   Select,
@@ -25,7 +26,7 @@ import { UploadOutlined } from "@ant-design/icons";
 const { RangePicker } = DatePicker;
 
 const PAGESIZE = 25;
-const BASE_URL = "https://localhost:7242/api/";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 dayjs.extend(customParseFormat);
 const ProjectList = () => {
   const dateFormat = "YYYY-MM-DD";
@@ -36,6 +37,7 @@ const ProjectList = () => {
   const [request, setRequest] = useState("");
   const [endDate, setEndDate] = useState(dayjs(dayjs(), dateFormat));
   const [startDate, setStartDate] = useState(dayjs(dayjs(), dateFormat));
+  const [price, setPrice] = useState(0);
   const [customer, setCustomer] = useState(null);
   const [options, setOptions] = useState([]);
   const [file, setFile] = useState(null);
@@ -70,6 +72,7 @@ const ProjectList = () => {
       formData.append("CustomerId", customer.value);
       formData.append("StartDate", startDate);
       formData.append("EndDate", endDate);
+      formData.append("Price", price);
       const response = await fetchForm("Project/CreateProject", {
         body: formData,
       });
@@ -202,7 +205,7 @@ const ProjectList = () => {
             </Button>
           </Upload>
         </div>
-        <Label>
+        <Label className="mt-4">
           <span>Tên dự án</span>
           <Input
             value={projectName}
@@ -254,6 +257,18 @@ const ProjectList = () => {
             format={dateFormat}
             defaultValue={[startDate, endDate]}
             minDate={dayjs()}
+          />
+        </Label>
+        <Label className="mt-4">
+          <span>Giá</span>
+          <InputNumber 
+            value={price}
+            onChange={(e) => setPrice(e)}
+            className="mt-1 w-full"
+            type="text"
+            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+            parser={(value) => value?.replace(/\đ\s?|(,*)/g, '')}
+            placeholder="Đơn giá"
           />
         </Label>
         {/* <Label className="mt-4">

@@ -104,3 +104,6 @@
 .top-12 {
   top: 3rem;
 }
+.border-t-1{
+  border-top-width: 1px;
+}

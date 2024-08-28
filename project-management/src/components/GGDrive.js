@@ -8,7 +8,7 @@ function GGDrive({ fileId }) {
 
   useEffect(() => {
     // Replace this with your actual API endpoint
-    fetch(BASE_URL+"Image/GetImage/" + fileId)
+    fetch(process.env.REACT_APP_API_BASE_URL + "Image/GetImage/" + fileId)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -30,9 +30,9 @@ function GGDrive({ fileId }) {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div>
+    <div className="w-full overflow-hidden flex justify-center items-center">
       {imageSrc ? (
-        <img src={imageSrc} alt="Google Drive" />
+        <img className="object-contain" src={imageSrc} alt="Google Drive" />
       ) : (
         <p>No image available</p>
       )}
