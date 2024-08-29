@@ -14,6 +14,16 @@ import {
 } from "@ant-design/icons";
 import { Label } from "@windmill/react-ui";
 import GGDrive from "../../components/GGDrive";
+import { useParams } from "react-router-dom";
+import fetchWithAuth, { fetchForm, getWithAuth } from "../../utils/callApi";
+import dayjs from "dayjs";
+import { useToast } from "../../context/ToastContext";
+import ImageDefault from "../../assets/img/default-img.jpg";
+
+function formatString(dateStr) {
+  const date = Date.parse(dateStr);
+  return date.Da;
+}
 const steps = [
   {
     title: "Dự án",
@@ -36,15 +46,84 @@ const steps = [
     content: "4-content",
   },
 ];
+const step1def = {
+  projectName: "Tên dự án",
+  startDate: "01-01-2000",
+  endDate: "01-01-2000",
+  request: "Yêu cầu khó hiểu của khách hàng",
+  cover: { ImageDefault },
+  leadName: "Tên quản lý",
+  leadPhone: "0987654321",
+  leadEmail: "abc@gmail.com",
+  customerName: "Nguyễn Văn A",
+  customerPhone: "0123456789",
+  customerAddress: "XXXXXX",
+  totalMoney: 1,
+};
 const ProjectDetail = () => {
-  const [current, setCurrent] = useState(1);
+  const { id } = useParams();
+  const { addToast } = useToast();
+  const [step1Data, setStep1Data] = useState(step1def);
+  const [current, setCurrent] = useState(0);
   const [approveOrNot, setApproveOrNot] = useState(null);
   const items = steps.map((item) => ({
     ...item,
     key: item.title,
     title: item.title,
   }));
-  const startBtnClick = () => {
+  const loadData = async () => {
+    try {
+      const response = await getWithAuth("Project/GetProject/" + id);
+      const data = response.data;
+      if (response.code == "200") {
+        console.log(data);
+        if (data.projectStatus == 0) {
+          setCurrent(0);
+          //data 1
+          const data1 = {
+            projectName: data.projectName,
+            startDate: dayjs(data.startDate).format("DD-MM-YYYY"),
+            endDate: dayjs(data.expectedEndDate).format("DD-MM-YYYY"),
+            request: data.requestDescriptionFromCustomer,
+            cover:
+              process.env.REACT_APP_API_BASE_URL +
+              "Image/GetImage/" +
+              data.file.driveFileId,
+            leadName: data.employee.fullName,
+            leadPhone: data.employee.phoneNumber,
+            leadEmail: data.employee.email,
+            customerName: data.customer.fullName,
+            customerPhone: data.customer.phoneNumber,
+            customerAddress: data.customer.address,
+            totalMoney: `${data.bills[0].totalMoney}đ`.replace(
+              /\B(?=(\d{3})+(?!\d))/g,
+              ","
+            ),
+          };
+          setStep1Data(data1);
+        } else if (data.projectStatus == 25) setCurrent(1);
+        else if (data.projectStatus == 50) setCurrent(2);
+        else if (data.projectStatus == 75) setCurrent(3);
+        else if (data.projectStatus == 100) setCurrent(4);
+      } else {
+        addToast("danger", data.message, 10000);
+      }
+    } catch (error) {
+      addToast("danger", error.message, 10000);
+    }
+  };
+  const startBtnClick = async () => {
+    try {
+      const response = await fetchWithAuth("Project/StartProject/" + id);
+      const data = response.data;
+      if (response.code == "200") {
+        loadData();
+      } else {
+        addToast("danger", data.message, 10000);
+      }
+    } catch (error) {
+      addToast("danger", error.message, 10000);
+    }
     setCurrent(current + 1);
   };
   const defuseBtnClick = () => {
@@ -53,12 +132,9 @@ const ProjectDetail = () => {
   const approveBtnClick = () => {
     setCurrent(current + 1);
   };
-  const next = () => {
-    setCurrent(current + 1);
-  };
-  const prev = () => {
-    setCurrent(current - 1);
-  };
+  useEffect(() => {
+    loadData();
+  }, []);
   return (
     <>
       <Steps
@@ -72,23 +148,16 @@ const ProjectDetail = () => {
           <>
             <div className="flex">
               <div className="p-4 basis-1/3 overflow-hidden flex justify-center items-center">
-                <GGDrive fileId="1k6TDf4sFzjljfDb1OSBLoqGf6J7EMXgP"></GGDrive>
+                {/* <GGDrive fileId={step1Data.cover}></GGDrive> */}
+                <img src={step1Data.cover} />
               </div>
               <div className="p-4 basis-1/3">
-                <h1 className="font-bold text-xl">TTs T8 project</h1>
-                <p className="mt-2">Ngày tạo: 25/8/2023</p>
-                <p className="mt-2">Ngày tạo: 25/8/2023</p>
+                <h1 className="font-bold text-xl">{step1Data.projectName}</h1>
+                <p className="mt-2">Ngày tạo: {step1Data.startDate}</p>
+                <p className="mt-2">Ngày tạo: {step1Data.endDate}</p>
                 <p className="mt-2">
-                  Yêu cầu của khách hàng: 1k6TDf4sFzjljfDb1OSBLoqGf6J7EMXgP
-                  1k6TDf4sFzjljfDb1OSBLoqGf6J7EMXgP
-                  1k6TDf4sFzjljfDb1OSBLoqGf6J7EMXgP
-                  1k6TDf4sFzjljfDb1OSBLoqGf6J7EMXgP
-                </p>
-                <p className="mt-2">
-                  Yêu cầu của khách hàng: 1k6TDf4sFzjljfDb1OSBLoqGf6J7EMXgP
-                  1k6TDf4sFzjljfDb1OSBLoqGf6J7EMXgP
-                  1k6TDf4sFzjljfDb1OSBLoqGf6J7EMXgP
-                  1k6TDf4sFzjljfDb1OSBLoqGf6J7EMXgP
+                  Yêu cầu từ khách hàng: <br />
+                  {step1Data.request}
                 </p>
               </div>
               <div className="p-2 basis-1/3 ">
@@ -97,22 +166,27 @@ const ProjectDetail = () => {
                     <h1 className="font-bold text-xl">Thông tin dự án</h1>
                     <div className="mt-2 p-3 bg-gray-700 rounded-lg border-dotted">
                       <p className="font-bold">
-                        Người phụ trách: Lương Tiến Anh
+                        Người phụ trách: {step1Data.leadName}
                       </p>
-                      <p className="mt-2">Số điện thoại: 05222909291</p>
-                      <p className="mt-2">Email: tienanh@email.com</p>
+                      <p className="mt-2">
+                        Số điện thoại: {step1Data.leadPhone}
+                      </p>
+                      <p className="mt-2">Email: {step1Data.leadPhone}</p>
                     </div>
                     <div className="mt-2 p-3 bg-gray-700 rounded-lg border-dotted">
                       <p className="font-bold">
-                        Người phụ trách: Lương Tiến Anh
+                        Khách hàng: {step1Data.customerName}
                       </p>
-                      <p className="mt-2">Số điện thoại: 05222909291</p>
-                      <p className="mt-2">Email: tienanh@email.com</p>
-                      <p className="mt-2">Địa chỉ: Hà Nội</p>
+                      <p className="mt-2">
+                        Số điện thoại: {step1Data.customerPhone}
+                      </p>
+                      <p className="mt-2">
+                        Địa chỉ: {step1Data.customerAddress}
+                      </p>
                     </div>
                   </div>
                   <div className="font-bold text-xl border-t-1 border-dotted">
-                    Thành tiền: 100.000đ
+                    Thành tiền: {step1Data.totalMoney}
                   </div>
                 </div>
               </div>
@@ -133,9 +207,7 @@ const ProjectDetail = () => {
         {current === 1 && (
           <>
             <div className="flex">
-              <div className="basis-2/3">
-              
-              </div>
+              <div className="basis-2/3"></div>
               <div className="p-2 basis-1/3 ">
                 <div className="p-2 border rounded-lg h-full border-dotted flex flex-col justify-between">
                   <div>
@@ -163,12 +235,20 @@ const ProjectDetail = () => {
                     </Label>
 
                     {approveOrNot == true && (
-                      <Button onClick={approveBtnClick} type="primary" className="w-full">
+                      <Button
+                        onClick={approveBtnClick}
+                        type="primary"
+                        className="w-full"
+                      >
                         Phê duyệt
                       </Button>
                     )}
                     {approveOrNot == false && (
-                      <Button onClick={defuseBtnClick} type="primary" className="w-full">
+                      <Button
+                        onClick={defuseBtnClick}
+                        type="primary"
+                        className="w-full"
+                      >
                         Không phê duyệt
                       </Button>
                     )}
@@ -179,44 +259,6 @@ const ProjectDetail = () => {
           </>
         )}
       </Card>
-      <div className="hidden justify-between mt-4">
-        <div>
-          {current > 0 && (
-            <Button
-              onClick={() => prev()}
-              icon={<BackwardOutlined />}
-              size="large"
-            >
-              Bước trước
-            </Button>
-          )}
-        </div>
-        <div>
-          {current < steps.length - 1 && (
-            <Button
-              className=""
-              type="primary"
-              onClick={() => next()}
-              icon={<ForwardOutlined />}
-              iconPosition="end"
-              size="large"
-            >
-              Tiếp tục
-            </Button>
-          )}
-          {current === steps.length - 1 && (
-            <Button
-              icon={<CheckOutlined />}
-              iconPosition="end"
-              type="primary"
-              size="large"
-              onClick={() => message.success("Processing complete!")}
-            >
-              Hoàn thành
-            </Button>
-          )}
-        </div>
-      </div>
     </>
   );
 };
