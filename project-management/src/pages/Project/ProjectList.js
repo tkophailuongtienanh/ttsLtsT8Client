@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import PageTitle from "../../components/Typography/PageTitle";
 import ProjectItem from "../../components/Projects/ProjectItem";
 import dayjs from "dayjs";
@@ -11,6 +17,7 @@ import {
   InputNumber,
   message,
   Modal,
+  Pagination,
   Select,
   Spin,
   Upload,
@@ -25,7 +32,7 @@ import { UploadOutlined } from "@ant-design/icons";
 
 const { RangePicker } = DatePicker;
 
-const PAGESIZE = 25;
+const PAGESIZE = 6;
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 dayjs.extend(customParseFormat);
 const ProjectList = () => {
@@ -43,8 +50,10 @@ const ProjectList = () => {
   const [file, setFile] = useState(null);
   const [url, setUrl] = useState(ImageDefault);
   const [data, setData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [total, setTotal] = useState(0);
 
-  const loadProjectList = async (pageSize = PAGESIZE, pageIndex = 0) => {
+  const loadProjectList = async ( pageIndex = 0, pageSize = PAGESIZE) => {
     try {
       const response = await getWithAuth(
         "Project/GetProjectList",
@@ -54,6 +63,7 @@ const ProjectList = () => {
       console.log(data);
       if (response.code == "200") {
         setData(data.list);
+        setTotal(data.total);
       } else if (response.code) {
         addToast(
           "danger",
@@ -73,13 +83,14 @@ const ProjectList = () => {
       formData.append("StartDate", startDate);
       formData.append("EndDate", endDate);
       formData.append("Price", price);
+      setIsModalOpen(false);
+      addToast("alert", "Đang thêm dự án", 5000);
       const response = await fetchForm("Project/CreateProject", {
         body: formData,
       });
       const data = response.data;
       console.log(data);
       if (response.code == "200") {
-        setIsModalOpen(false);
         addToast("success", "Thêm dự án thành công", 5000);
         loadProjectList();
         clearModal();
@@ -155,6 +166,31 @@ const ProjectList = () => {
     setStartDate(dayjs(dayjs(), dateFormat));
     setEndDate(dayjs(dayjs(), dateFormat));
     setFile(null);
+    setUrl(ImageDefault);
+  };
+  const deleteCallBack = useCallback(async (id) => {
+    try {
+      const response = await fetchWithAuth("Project/DeleteProject", {
+        body: id,
+      });
+      const data = response.data;
+      if (response.code == "200") {
+        loadProjectList();
+        // setData(data.list);
+      } else if (response.code) {
+        addToast(
+          "danger",
+          response.code + ": " + data.errorCode + "-" + data.message,
+          10000
+        );
+      }
+    } catch (error) {}
+  });
+  const onChange = (curpage, pageSize) => {
+    console.log(curpage);
+    
+    setCurrentPage(curpage);
+    loadProjectList(curpage - 1, pageSize);
   };
   useEffect(() => {
     loadProjectList();
@@ -172,18 +208,26 @@ const ProjectList = () => {
           <i className="fa-solid fa-plus mr-2"></i>Thêm mới
         </button>
       </div>
-      <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4 justify-items-stretch">
         {data.map((item) => (
           <ProjectItem
             key={item.id}
             id={item.id}
             name={item.projectName}
             lead={item.employee.fullName}
-            status={item.projectStatus}
+            status={parseInt(item.projectStatus)}
             coverUrl={BASE_URL + "Image/GetImage/" + item.file.driveFileId}
+            deleteCallBack={deleteCallBack}
           ></ProjectItem>
         ))}
-      </div>
+      </div><Pagination
+          className="mt-2"
+          align="end"
+          current={currentPage}
+          onChange={onChange}
+          total={total}
+          pageSize={PAGESIZE}
+        />
       <Modal
         title="Thêm mới dự án"
         open={isModalOpen}
@@ -199,7 +243,12 @@ const ProjectList = () => {
             }}
             className="rounded bg-cover bg-center"
           ></div>
-          <Upload {...props} maxCount={1} onChange={onFileUpload}>
+          <Upload
+            className="max-w-55/100 overflow-hidden"
+            {...props}
+            maxCount={1}
+            onChange={onFileUpload}
+          >
             <Button type="primary" icon={<UploadOutlined />}>
               Tải ảnh lên...
             </Button>
@@ -261,13 +310,15 @@ const ProjectList = () => {
         </Label>
         <Label className="mt-4">
           <span>Giá</span>
-          <InputNumber 
+          <InputNumber
             value={price}
             onChange={(e) => setPrice(e)}
             className="mt-1 w-full"
             type="text"
-            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            parser={(value) => value?.replace(/\đ\s?|(,*)/g, '')}
+            formatter={(value) =>
+              `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            }
+            parser={(value) => value?.replace(/\đ\s?|(,*)/g, "")}
             placeholder="Đơn giá"
           />
         </Label>

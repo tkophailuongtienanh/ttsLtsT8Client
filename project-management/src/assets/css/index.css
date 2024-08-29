@@ -107,3 +107,19 @@
 .border-t-1{
   border-top-width: 1px;
 }
+.max-w-55\/100{
+  max-width: 55%;
+} 
+.justify-self-end{
+  justify-self: end;
+}
+.justify-items-stretch{
+  justify-items: stretch;
+}
+.ant-card{
+  display: flex;
+  flex-direction: column;
+}
+.ant-card-body{
+  flex-grow: 1;
+}
