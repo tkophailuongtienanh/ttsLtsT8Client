@@ -23,20 +23,15 @@ const ProjectItem = ({
     // window.location.href = "/app";
   };
   return (
-    <Card
-      bordered={false}
-      cover={
-        <div
-          className="bg-no-repeat bg-cover bg-center"
-          style={{
-            backgroundImage: "url(" + coverUrl + ")",
-            width: "100%",
-            paddingBottom: "100%",
-          }}
-        ></div>
-      }
-    >
-      <div className="flex flex-col gap-2 justify-between h-full">
+    <div className="flex flex-col min-w-0 rounded-lg shadow-xs overflow-hidden bg-white dark:bg-gray-800">
+      <div  className="bg-no-repeat bg-cover bg-center"
+        style={{
+          backgroundImage: "url(" + coverUrl + ")",
+          width: "100%",
+          paddingBottom: "100%",
+        }}
+      ></div>
+      <div className="flex flex-col h-full gap-2 justify-between text-gray-100 text-sm p-3">
         <div>
           <div className="font-bold text-lg">{name}</div>
           <div className="">
@@ -89,7 +84,7 @@ const ProjectItem = ({
           </div>
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
 export default ProjectItem;

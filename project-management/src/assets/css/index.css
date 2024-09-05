@@ -116,10 +116,3 @@
 .justify-items-stretch{
   justify-items: stretch;
 }
-.ant-card{
-  display: flex;
-  flex-direction: column;
-}
-.ant-card-body{
-  flex-grow: 1;
-}
