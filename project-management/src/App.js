@@ -28,7 +28,7 @@ function App() {
           <Route path="/ResetPassword" element={<ResetPassword />} />
           <Route path="/app/*" element={<Layout />} />
           
-          {/* Default redirect */}
+          {/* Default redirects */}
           <Route path="/" element={<Navigate to="/login" />} />
         </Routes>
       </Router>
