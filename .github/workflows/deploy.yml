@@ -30,7 +30,7 @@ jobs:
       - name: Build the app
         run: |
           CI=false npm run build
-        working-directory: ./project
+        working-directory: ./project-management
 
       - name: Build the app
         run: npm run build
