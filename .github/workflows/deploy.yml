@@ -14,14 +14,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Chuyển tới thư mục 'project' (thư mục con chứa project React)
-      - name: Change directory to project
-        run: cd project-management
-        
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-            node-version: '16'
+          node-version: '16'
 
       - name: Install dependencies
         run: npm install
